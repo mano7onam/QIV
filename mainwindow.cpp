@@ -7,6 +7,8 @@
 #include <QDebug>
 #include <QDateTime>
 
+#include <iostream>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -135,4 +137,14 @@ void MainWindow::on_actionAbout_triggered()
 {
     AboutDlg dlg(this);
     dlg.exec();
+}
+
+void MainWindow::on_actionApplyKanny_triggered()
+{
+    std::cout << "AAAAAAAAAAA!!!" << std::endl;
+    QString strError;
+    ui->graphicsView->applyKennyAlgorithm();
+    //saveImage();
+    //ui->graphicsView->update();
+    std::cout << "BBBBBBBBBBB!!!" << std::endl;
 }

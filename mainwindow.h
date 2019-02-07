@@ -29,7 +29,10 @@ private slots:
     void printImage();
     void saveImage();
     void rotateImage();
+//    void applyKannyAlgorithm();
+//    void applyGaborFilter();
     void on_actionAbout_triggered();
+    void on_actionApplyKanny_triggered();
 };
 
 #endif // MAINWINDOW_H

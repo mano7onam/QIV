@@ -7,6 +7,9 @@
 #include <QtMath>
 #include <QMatrix>
 
+#include <random>
+#include "algorithms.h"
+
 ImgViewer::ImgViewer(QWidget *parent) :
     QGraphicsView(parent), m_rotateAngle(0), m_IsFitWindow(false), m_IsViewInitialized(false)
 {
@@ -126,7 +129,7 @@ void ImgViewer::printView()
 
 bool ImgViewer::saveViewToDisk(QString &strError)
 {
-    if(m_image.isNull()){
+    if (m_image.isNull()) {
         strError = QObject::tr("Save failed.");
         return false;
     }
@@ -144,17 +147,18 @@ bool ImgViewer::saveViewToDisk(QString &strError)
 
 
     // If Cancel is pressed, getSaveFileName() returns a null string.
-    if(strFilePath==""){
+    if (strFilePath=="") {
         strError = QObject::tr("");
         return false;
     }
 
     // ensure output path has proper extension
-    if(!strFilePath.endsWith(fileFormat))
+    if (!strFilePath.endsWith(fileFormat)) {
          strFilePath += "."+fileFormat;
+    }
 
     // save image in modified state
-    if(isModified()) {
+    if (isModified()) {
         QTransform t;
         t.rotate(m_rotateAngle);
         imageCopy = imageCopy.transformed(t, Qt::SmoothTransformation);
@@ -162,7 +166,7 @@ bool ImgViewer::saveViewToDisk(QString &strError)
 
     // quality factor (-1 default, 100 max)
     // note: -1 is about 4 times smaller than original, 100 is larger than original
-    if(!imageCopy.save(strFilePath,fileFormat.toLocal8Bit().constData(),100)){
+    if (!imageCopy.save(strFilePath,fileFormat.toLocal8Bit().constData(), 100)) {
         strError = QObject::tr("Save failed.");
         return false;
     }
@@ -210,4 +214,52 @@ void ImgViewer::wheelEvent(QWheelEvent *event)
     // scale  the View
     this->scale(factor,factor);
     event->accept();
+}
+
+void ImgViewer::drawChangedImage()
+{
+    m_pixmap = QPixmap::fromImage(m_image);
+    m_pixmapItem = m_scene->addPixmap(m_pixmap); // add pixmap to scene and return pointer to pixmapItem
+    m_scene->setSceneRect(m_pixmap.rect());      // set scene rect to image
+}
+
+void ImgViewer::applyRandomBlurAlgorithm()
+{
+    std::mt19937 mt_rand(time(0));
+    auto dice_rand = std::bind(std::uniform_int_distribution<int>(0,4), mt_rand);
+    for (int i = 0; i < m_image.width(); ++i)
+    {
+        for (int j = 0; j < m_image.height(); ++j)
+        {
+            if (dice_rand() == 0)
+            {
+                int allR = 0;
+                int allG = 0;
+                int allB = 0;
+                int cnt = 0;
+                for (int ci = i - 3; ci <= i + 3; ++ci) {
+                    for (int cj = j - 3; cj <= j + 3; ++cj) {
+                        if (ci < 0 || cj < 0 || ci >= m_image.width() || cj >= m_image.height()) continue;
+                        allR += qRed(m_image.pixel(ci, cj));
+                        allG += qGreen(m_image.pixel(ci, cj));
+                        allB += qBlue(m_image.pixel(ci, cj));
+                        cnt++;
+                    }
+                }
+                allR /= cnt;
+                allG /= cnt;
+                allB /= cnt;
+                m_image.setPixel(i, j, qRgb(allR, allG, allB));
+            }
+        }
+    }
+
+    drawChangedImage();
+}
+
+void ImgViewer::applyKennyAlgorithm()
+{
+    auto grayscale = m_image.convertToFormat(QImage::Format_Grayscale8);
+    m_image = canny(grayscale, 1, 40, 120);
+    drawChangedImage();
 }

@@ -30,6 +30,9 @@ public:
     inline int getRotateAngle(){ return m_rotateAngle; }
     QString getImageFormat(QString strFileName);
 
+    void drawChangedImage();
+    void applyKennyAlgorithm();
+    void applyRandomBlurAlgorithm();
 
 private:
     mutable QImage m_image;

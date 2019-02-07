@@ -16,11 +16,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     imgviewer.cpp \
-    aboutdlg.cpp
+    aboutdlg.cpp \
+    algorithms.cpp
 
 HEADERS  += mainwindow.h \
     imgviewer.h \
-    aboutdlg.h
+    aboutdlg.h \
+    algorithms.h \
+    kernels.h
 
 FORMS    += mainwindow.ui \
     aboutdlg.ui
