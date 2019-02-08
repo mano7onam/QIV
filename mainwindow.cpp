@@ -141,15 +141,14 @@ void MainWindow::on_actionAbout_triggered()
 
 void MainWindow::on_actionApplyKanny_triggered()
 {
-    std::cout << "AAAAAAAAAAA!!!" << std::endl;
-    QString strError;
+    std::cout << "Apply Canny algorithm..." << std::endl;
     ui->graphicsView->applyCannyAlgorithm();
-    //saveImage();
-    //ui->graphicsView->update();
-    std::cout << "BBBBBBBBBBB!!!" << std::endl;
+    std::cout << "Canny algorithm applied." << std::endl;
 }
 
 void MainWindow::on_actionGarborFilter_triggered()
 {
+    std::cout << "Apply Gabor filter..." << std::endl;
     ui->graphicsView->applyGaborFilter();
+    std::cout << "Gabor filter applied..." << std::endl;
 }

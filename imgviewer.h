@@ -18,7 +18,6 @@ public:
     explicit ImgViewer(QWidget *parent = 0);
 
     bool loadFile(const QString &strFilePath, QString &strError);
-    // bool loadFile(const QImage &image, QString &strError); TODO overload
 
     void resetView();
     void fitWindow();

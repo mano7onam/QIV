@@ -227,7 +227,7 @@ void ImgViewer::drawChangedImage()
 void ImgViewer::applyRandomBlurAlgorithm()
 {
     std::mt19937 mt_rand(time(0));
-    auto dice_rand = std::bind(std::uniform_int_distribution<int>(0,4), mt_rand);
+    auto dice_rand = std::bind(std::uniform_int_distribution<int>(0, 4), mt_rand);
     for (int i = 0; i < m_image.width(); ++i)
     {
         for (int j = 0; j < m_image.height(); ++j)
@@ -261,7 +261,7 @@ void ImgViewer::applyRandomBlurAlgorithm()
 void ImgViewer::applyCannyAlgorithm()
 {
     auto grayscale = m_image.convertToFormat(QImage::Format_Grayscale8);
-    m_image = canny(grayscale, 1, 40, 120);
+    m_image = algorithms::canny(grayscale, 1, 40, 120);
     drawChangedImage();
 }
 
@@ -273,7 +273,7 @@ void ImgViewer::applyGaborFilter()
     double sigma = 0.56 * lambda;
     double theta = M_PI / 3;
     double phi = 0;
-    Matrix<double, 5, 5> kernel = getGaborKernel1(sigma, theta, lambda, gamma, phi);
-    m_image = convolution1(kernel, grayscale);
+    auto kernel = algorithms::getGaborKernel(sigma, theta, lambda, gamma, phi);
+    m_image = algorithms::convolution(kernel, grayscale);
     drawChangedImage();
 }
