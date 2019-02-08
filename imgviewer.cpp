@@ -9,6 +9,7 @@
 
 #include <random>
 #include "algorithms.h"
+#include "kernels.h"
 
 ImgViewer::ImgViewer(QWidget *parent) :
     QGraphicsView(parent), m_rotateAngle(0), m_IsFitWindow(false), m_IsViewInitialized(false)
@@ -257,9 +258,22 @@ void ImgViewer::applyRandomBlurAlgorithm()
     drawChangedImage();
 }
 
-void ImgViewer::applyKennyAlgorithm()
+void ImgViewer::applyCannyAlgorithm()
 {
     auto grayscale = m_image.convertToFormat(QImage::Format_Grayscale8);
     m_image = canny(grayscale, 1, 40, 120);
+    drawChangedImage();
+}
+
+void ImgViewer::applyGaborFilter()
+{
+    QImage grayscale = m_image.convertToFormat(QImage::Format_Grayscale8);
+    double lambda = 3;
+    double gamma = 0.1;
+    double sigma = 0.56 * lambda;
+    double theta = M_PI / 3;
+    double phi = 0;
+    Matrix<double, 5, 5> kernel = getGaborKernel1(sigma, theta, lambda, gamma, phi);
+    m_image = convolution1(kernel, grayscale);
     drawChangedImage();
 }

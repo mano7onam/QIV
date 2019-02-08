@@ -31,8 +31,9 @@ public:
     QString getImageFormat(QString strFileName);
 
     void drawChangedImage();
-    void applyKennyAlgorithm();
+    void applyCannyAlgorithm();
     void applyRandomBlurAlgorithm();
+    void applyGaborFilter();
 
 private:
     mutable QImage m_image;

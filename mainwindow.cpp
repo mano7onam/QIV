@@ -143,8 +143,13 @@ void MainWindow::on_actionApplyKanny_triggered()
 {
     std::cout << "AAAAAAAAAAA!!!" << std::endl;
     QString strError;
-    ui->graphicsView->applyKennyAlgorithm();
+    ui->graphicsView->applyCannyAlgorithm();
     //saveImage();
     //ui->graphicsView->update();
     std::cout << "BBBBBBBBBBB!!!" << std::endl;
+}
+
+void MainWindow::on_actionGarborFilter_triggered()
+{
+    ui->graphicsView->applyGaborFilter();
 }

@@ -33,6 +33,7 @@ private slots:
 //    void applyGaborFilter();
     void on_actionAbout_triggered();
     void on_actionApplyKanny_triggered();
+    void on_actionGarborFilter_triggered();
 };
 
 #endif // MAINWINDOW_H
