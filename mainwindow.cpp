@@ -18,12 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_infoLabel->setStyleSheet("QLabel {padding-left:3px;}");
     this->setStyleSheet("QStatusBar::item {border:none;}");
 
-
     // statusbar info left (color settings)
     QPalette palette;
-    palette.setColor( QPalette::WindowText,"#cccccc");
+    palette.setColor( QPalette::WindowText, "#cccccc");
     ui->statusBar->setPalette(palette);
-
 
     ui->statusBar->addWidget(m_infoLabel);
 
@@ -61,7 +59,7 @@ void MainWindow::openImage()
                 QDir::homePath(),
                 tr("Images (*.png *.jpg *.bmp *.tiff *.tif)"));
 
-    if (!strFilePath.isEmpty()){
+    if (!strFilePath.isEmpty()) {
 
         QApplication::setOverrideCursor(Qt::WaitCursor);
         QString strError;
@@ -92,10 +90,11 @@ void MainWindow::closeImage()
 void MainWindow::saveImage()
 {
     QString strError;
-    if(!ui->graphicsView->saveViewToDisk(strError)){
+    if (!ui->graphicsView->saveViewToDisk(strError)) {
         QApplication::restoreOverrideCursor();
-        if(!strError.isEmpty())
+        if (!strError.isEmpty()) {
             QMessageBox::information(this,tr("Error"),strError);
+        }
         return;
     }
 }
@@ -103,10 +102,11 @@ void MainWindow::saveImage()
 void MainWindow::rotateImage()
 {
     QObject* obj = sender();
-    if(obj == ui->actionRotate_Left)
+    if (obj == ui->actionRotate_Left) {
         ui->graphicsView->rotateView(-90);
-    else
+    } else {
         ui->graphicsView->rotateView(90);
+    }
 }
 
 QString MainWindow::formatByteSize(int nBytes)

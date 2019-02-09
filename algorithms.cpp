@@ -10,27 +10,9 @@ using std::make_pair;
 
 namespace algorithms
 {
-    Matrix<double> getGaussianKernel(double sigma) {
-        Matrix<double> gauss(vector<std::vector<double>>(5, vector<double>(5)));
-        double sum = 0;
-        double s = 2 * sigma * sigma;
-
-        for (int x = -2; x <= 2; x++) {
-            for (int y = -2; y <= 2; y++) {
-                sum += (gauss[x + 2][y + 2] = exp(-(x * x + y * y) / s) / s / M_PI);
-            }
-        }
-
-        for (auto& row : gauss) {
-            for (auto& x : row) {
-                x /= sum;
-            }
-        }
-
-        return gauss;
-    }
 
 
+    // Take sqrt(a^2 + b^2) where a and b is color value in gray scale of two images
     void magnitude(QImage& input, const QImage& gx, const QImage& gy) {
         quint8 *line;
         const quint8 *gx_line, *gy_line;
@@ -45,7 +27,6 @@ namespace algorithms
             }
         }
     }
-
 
     QImage hysteresis(const QImage& image, double tmin, double tmax) {
         auto res = QImage(image.size(), image.format());
@@ -101,12 +82,15 @@ namespace algorithms
 
 
     QImage canny(const QImage& input, double sigma, double tmin, double tmax) {
-        QImage res = convolution(getGaussianKernel(sigma), input); // Gaussian blur
+        // Gaussian blur
+        QImage res = convolution(getGaussianKernel(sigma), input);
 
         // Gradients
         QImage gx = convolution(sobelx, res);
         QImage gy = convolution(sobely, res);
 
+        // Take sqrt(a^2 + b^2) for each pixel in res
+        // Where a - pixel in gx and b - pixel in gy
         magnitude(res, gx, gy);
 
         // Non-maximum suppression

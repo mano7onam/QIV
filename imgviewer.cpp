@@ -26,7 +26,7 @@ bool ImgViewer::loadFile(const QString &strFilePath, QString &strError)
     resetView();
 
     m_image.load(strFilePath);
-    if(m_image.isNull()){
+    if (m_image.isNull()) {
         strError = QObject::tr("Cannot load %1.").arg(strFilePath);
         return false;
     }
@@ -38,10 +38,11 @@ bool ImgViewer::loadFile(const QString &strFilePath, QString &strError)
     this->centerOn(m_pixmapItem);                // ensure item is centered in the view.
 
     // preserve fitWindow if activated
-    if(m_IsFitWindow)
+    if (m_IsFitWindow) {
         fitWindow();
-    else
+    } else {
         this->setDragMode(ScrollHandDrag);
+    }
 
     m_IsViewInitialized = true;
     return true;
@@ -49,7 +50,7 @@ bool ImgViewer::loadFile(const QString &strFilePath, QString &strError)
 
 void ImgViewer::resetView()
 {
-    if(m_image.isNull()){
+    if (m_image.isNull()) {
         return;
     }
 
@@ -64,15 +65,16 @@ void ImgViewer::resetView()
 void ImgViewer::reactToFitWindowToggle(bool checked)
 {
     m_IsFitWindow = checked;
-    if(checked)
+    if (checked) {
         fitWindow();
-    else
+    } else {
         originalSize();
+    }
 }
 
 void ImgViewer::fitWindow()
 {
-    if(m_image.isNull())
+    if (m_image.isNull())
         return;
 
     this->setDragMode(NoDrag);
@@ -85,7 +87,7 @@ void ImgViewer::fitWindow()
 
 void ImgViewer::originalSize()
 {
-    if(m_image.isNull())
+    if (m_image.isNull())
         return;
 
     this->setDragMode(ScrollHandDrag);
@@ -97,7 +99,7 @@ void ImgViewer::originalSize()
 
 void ImgViewer::rotateView(const int nVal)
 {
-    if(m_image.isNull()){
+    if (m_image.isNull()) {
         return;
     }
 
@@ -109,7 +111,7 @@ void ImgViewer::rotateView(const int nVal)
     m_rotateAngle += nVal;  // a=a+(-90)== -90
 
     // reset angle
-    if(m_rotateAngle >= 360 || m_rotateAngle <= -360){
+    if (m_rotateAngle >= 360 || m_rotateAngle <= -360) {
         m_rotateAngle =0;
     }
 }
@@ -177,20 +179,21 @@ bool ImgViewer::saveViewToDisk(QString &strError)
 QString ImgViewer::getImageFormat(QString strFileName)
 {
     QString str = strFileName.mid(strFileName.lastIndexOf(".")+1,-1);
-    if(str.toLower() == "tif")
+    if (str.toLower() == "tif") {
         str = "tiff";
+    }
     return str;
 }
 
 // preserve fitWindow state on window resize
 void ImgViewer::resizeEvent(QResizeEvent *event)
 {
-    if(!m_IsViewInitialized)
+    if (!m_IsViewInitialized)
         return;
 
-    if(m_IsFitWindow)
+    if (m_IsFitWindow) {
         fitWindow();
-    else {
+    } else {
         QGraphicsView::resizeEvent(event);  // call base implementation
         this->centerOn(m_pixmapItem);
     }
@@ -200,7 +203,7 @@ void ImgViewer::resizeEvent(QResizeEvent *event)
 void ImgViewer::wheelEvent(QWheelEvent *event)
 {
     // prevent zooming when fitWindow is active
-    if(m_IsFitWindow)
+    if (m_IsFitWindow)
         return;
 
     this->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
@@ -209,8 +212,9 @@ void ImgViewer::wheelEvent(QWheelEvent *event)
     qreal factor = 1.15;
 
     // zoomOut factor
-    if(event->delta() < 0)
+    if (event->delta() < 0) {
         factor = 1.0 / factor;
+    }
 
     // scale  the View
     this->scale(factor,factor);

@@ -19,8 +19,8 @@ public:
 private:
     Ui::MainWindow *ui;
     QLabel *m_infoLabel;
-    void enableControls(bool bEnable);
     QString formatByteSize(int nBytes);
+    void enableControls(bool bEnable);
     void updateStatusBarInfo(QString strFile);
 
 private slots:
@@ -29,8 +29,6 @@ private slots:
     void printImage();
     void saveImage();
     void rotateImage();
-//    void applyKannyAlgorithm();
-//    void applyGaborFilter();
     void on_actionAbout_triggered();
     void on_actionApplyKanny_triggered();
     void on_actionGarborFilter_triggered();

@@ -6,7 +6,6 @@
 
 namespace algorithms
 {
-    Matrix<double> getGaussianKernel(double);
     void magnitude(QImage&, const QImage&, const QImage&);
     QImage canny(const QImage&, double, double, double);
     QImage sobel(const QImage&);

@@ -2,6 +2,7 @@
 #define KERNELS_H
 
 #include <array>
+using std::vector;
 
 //template<class T, size_t Rows, size_t Cols> using Matrix = std::array<std::array<T, Cols>, Rows>;
 namespace algorithms
@@ -75,8 +76,6 @@ namespace algorithms
         xmin = -xmax;
         ymin = -ymax;
 
-    //    CV_Assert( ktype == CV_32F || ktype == CV_64F ); TODO: T == double || T == double
-
         Matrix<T> kernel(std::vector<std::vector<T>>(W, std::vector<T>(H)));
         T scale = 1;
         T ex = -0.5 / (sigma_x * sigma_x);
@@ -94,6 +93,27 @@ namespace algorithms
         }
 
         return kernel;
+    }
+
+    template<class T>
+    Matrix<T> getGaussianKernel(T sigma) {
+        Matrix<T> gauss(vector<std::vector<T>>(5, vector<T>(5)));
+        T sum = 0;
+        T s = 2 * sigma * sigma;
+
+        for (int x = -2; x <= 2; x++) {
+            for (int y = -2; y <= 2; y++) {
+                sum += (gauss[x + 2][y + 2] = exp(-(x * x + y * y) / s) / s / M_PI);
+            }
+        }
+
+        for (auto& row : gauss) {
+            for (auto& x : row) {
+                x /= sum;
+            }
+        }
+
+        return gauss;
     }
 }
 
