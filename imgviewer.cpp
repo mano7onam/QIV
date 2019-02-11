@@ -130,6 +130,44 @@ void ImgViewer::printView()
 #endif
 }
 
+bool ImgViewer::saveViewToDisk(QString &strFilePath, QString &strError)
+{
+    if (m_image.isNull()) {
+        strError = QObject::tr("Save failed.");
+        return false;
+    }
+
+    // save a copy
+    QImage imageCopy = m_image;
+
+    // If Cancel is pressed, getSaveFileName() returns a null string.
+    if (strFilePath=="") {
+        strError = QObject::tr("");
+        return false;
+    }
+
+    // ensure output path has proper extension
+    QString fileFormat = ".jpg";
+    if (!strFilePath.endsWith(fileFormat)) {
+         strFilePath += "."+fileFormat;
+    }
+
+    // save image in modified state
+    if (isModified()) {
+        QTransform t;
+        t.rotate(m_rotateAngle);
+        imageCopy = imageCopy.transformed(t, Qt::SmoothTransformation);
+    }
+
+    // quality factor (-1 default, 100 max)
+    // note: -1 is about 4 times smaller than original, 100 is larger than original
+    if (!imageCopy.save(strFilePath,fileFormat.toLocal8Bit().constData(), 100)) {
+        strError = QObject::tr("Save failed.");
+        return false;
+    }
+    return true;
+}
+
 bool ImgViewer::saveViewToDisk(QString &strError)
 {
     if (m_image.isNull()) {

@@ -8,6 +8,7 @@
 #include <QDateTime>
 
 #include <iostream>
+#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -149,6 +150,12 @@ void MainWindow::on_actionApplyKanny_triggered()
 void MainWindow::on_actionGarborFilter_triggered()
 {
     std::cout << "Apply Gabor filter..." << std::endl;
+    double ang = 0;
+    double cut = M_PI / 6;
+
+    for (int i = 0; i < 6; ++i, ang += cut) {
+        //ui->graphicsView->applyGaborFilter();
+    }
     ui->graphicsView->applyGaborFilter();
     std::cout << "Gabor filter applied..." << std::endl;
 }

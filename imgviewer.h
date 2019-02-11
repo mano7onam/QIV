@@ -24,6 +24,7 @@ public:
     void originalSize();
     void rotateView(const int nVal);
     void printView();
+    bool saveViewToDisk(QString &strFilePath, QString &strError);
     bool saveViewToDisk(QString &strError);
     inline bool isModified() { return m_rotateAngle!=0; }
     inline int getRotateAngle(){ return m_rotateAngle; }
