@@ -25,6 +25,7 @@ private:
 
 private slots:
     void openImage();
+    void openImages();
     void closeImage();
     void printImage();
     void saveImage();
@@ -32,6 +33,7 @@ private slots:
     void on_actionAbout_triggered();
     void on_actionApplyKanny_triggered();
     void on_actionGarborFilter_triggered();
+    void on_actionopenSeveralImages_triggered();
 };
 
 #endif // MAINWINDOW_H

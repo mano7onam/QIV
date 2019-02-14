@@ -116,6 +116,7 @@
    <addaction name="separator"/>
    <addaction name="actionApplyKanny"/>
    <addaction name="actionGarborFilter"/>
+   <addaction name="actionopenSeveralImages"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -255,6 +256,18 @@
    </property>
    <property name="toolTip">
     <string>Apply Garbor filter</string>
+   </property>
+  </action>
+  <action name="actionopenSeveralImages">
+   <property name="icon">
+    <iconset resource="imageViewer.qrc">
+     <normaloff>:/icons/about.png</normaloff>:/icons/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>openSeveralImages</string>
+   </property>
+   <property name="toolTip">
+    <string>Opne several images</string>
    </property>
   </action>
  </widget>

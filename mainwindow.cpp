@@ -52,16 +52,27 @@ void MainWindow::enableControls(bool bEnable)
     ui->actionFitWindow->setEnabled(bEnable);
 }
 
+void MainWindow::openImages()
+{
+    auto strFiles = QFileDialog::getOpenFileNames(
+                this,
+                tr("Open Files"),
+                "../QIV/Data",
+                tr("Images (*.png *.jpg *.bmp *.tiff *.tif)"));
+    for (auto& strFile : strFiles) {
+        std::cout << strFile.toStdString() << std::endl;
+    }
+}
+
 void MainWindow::openImage()
 {
     QString strFilePath = QFileDialog::getOpenFileName(
                 this,
                 tr("Open File"),
-                /*QDir::homePath()*/"../ImageProcessing/QIV/Data", // hardcoded (not so good)
+                /*QDir::homePath()*/"../QIV/Data", // hardcoded (not so good)
                 tr("Images (*.png *.jpg *.bmp *.tiff *.tif)"));
 
     if (!strFilePath.isEmpty()) {
-
         QApplication::setOverrideCursor(Qt::WaitCursor);
         QString strError;
         if(!ui->graphicsView->loadFile(strFilePath,strError) ){
@@ -150,18 +161,23 @@ void MainWindow::on_actionApplyKanny_triggered()
 void MainWindow::on_actionGarborFilter_triggered()
 {
     std::cout << "Apply Gabor filter..." << std::endl;
+
     double ang = 0;
     double cut = M_PI / 6;
 
     for (int i = 0; i < 6; ++i, ang += cut) {
-//        auto sourceImage = ui->graphicsView->getImage();
         auto resImage = ui->graphicsView->applyGaborFilter(ang);
         QString sErr;
         QString resFile = QStringLiteral("../results/res%1").arg(i);
-        //ui->graphicsView->saveViewToDisk(resFile, sErr);
         ui->graphicsView->saveImageToDisk(resImage, resFile, sErr);
         std::cout << resFile.toStdString() << ": " << sErr.toStdString() << std::endl;
-//        ui->graphicsView->setImage(sourceImage);
     }
+
     std::cout << "Gabor filter applied..." << std::endl;
+}
+
+void MainWindow::on_actionopenSeveralImages_triggered()
+{
+    std::cout << "Open several images:" << std::endl;
+    openImages();
 }
