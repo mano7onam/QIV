@@ -10,6 +10,7 @@
 #include <random>
 #include "algorithms.h"
 #include "kernels.h"
+#include <iostream>
 
 ImgViewer::ImgViewer(QWidget *parent) :
     QGraphicsView(parent), m_rotateAngle(0), m_IsFitWindow(false), m_IsViewInitialized(false)
@@ -130,15 +131,11 @@ void ImgViewer::printView()
 #endif
 }
 
-bool ImgViewer::saveViewToDisk(QString &strFilePath, QString &strError)
+bool ImgViewer::saveImageToDisk(QImage image, QString &_strFilePath, QString &strError)
 {
-    if (m_image.isNull()) {
-        strError = QObject::tr("Save failed.");
-        return false;
-    }
-
-    // save a copy
-    QImage imageCopy = m_image;
+    // Output file dialog
+    QString fileFormat = getImageFormat(m_fileName);
+    QString strFilePath = _strFilePath;
 
     // If Cancel is pressed, getSaveFileName() returns a null string.
     if (strFilePath=="") {
@@ -147,7 +144,6 @@ bool ImgViewer::saveViewToDisk(QString &strFilePath, QString &strError)
     }
 
     // ensure output path has proper extension
-    QString fileFormat = ".jpg";
     if (!strFilePath.endsWith(fileFormat)) {
          strFilePath += "."+fileFormat;
     }
@@ -156,16 +152,26 @@ bool ImgViewer::saveViewToDisk(QString &strFilePath, QString &strError)
     if (isModified()) {
         QTransform t;
         t.rotate(m_rotateAngle);
-        imageCopy = imageCopy.transformed(t, Qt::SmoothTransformation);
+        image = image.transformed(t, Qt::SmoothTransformation);
     }
 
     // quality factor (-1 default, 100 max)
     // note: -1 is about 4 times smaller than original, 100 is larger than original
-    if (!imageCopy.save(strFilePath,fileFormat.toLocal8Bit().constData(), 100)) {
+    if (!image.save(strFilePath,fileFormat.toLocal8Bit().constData(), 100)) {
         strError = QObject::tr("Save failed.");
         return false;
     }
     return true;
+}
+
+bool ImgViewer::saveViewToDisk(QString &strFilePath, QString &strError)
+{
+    if (m_image.isNull()) {
+        strError = QObject::tr("Save failed.");
+        return false;
+    }
+
+    return saveImageToDisk(m_image, strFilePath, strError);
 }
 
 bool ImgViewer::saveViewToDisk(QString &strError)
@@ -175,9 +181,6 @@ bool ImgViewer::saveViewToDisk(QString &strError)
         return false;
     }
 
-    // save a copy
-    QImage imageCopy = m_image;
-
     // Output file dialog
     QString fileFormat = getImageFormat(m_fileName);
     QString strFilePath = QFileDialog::getSaveFileName(
@@ -186,32 +189,7 @@ bool ImgViewer::saveViewToDisk(QString &strError)
                QDir::homePath(),
                fileFormat);
 
-
-    // If Cancel is pressed, getSaveFileName() returns a null string.
-    if (strFilePath=="") {
-        strError = QObject::tr("");
-        return false;
-    }
-
-    // ensure output path has proper extension
-    if (!strFilePath.endsWith(fileFormat)) {
-         strFilePath += "."+fileFormat;
-    }
-
-    // save image in modified state
-    if (isModified()) {
-        QTransform t;
-        t.rotate(m_rotateAngle);
-        imageCopy = imageCopy.transformed(t, Qt::SmoothTransformation);
-    }
-
-    // quality factor (-1 default, 100 max)
-    // note: -1 is about 4 times smaller than original, 100 is larger than original
-    if (!imageCopy.save(strFilePath,fileFormat.toLocal8Bit().constData(), 100)) {
-        strError = QObject::tr("Save failed.");
-        return false;
-    }
-    return true;
+    return saveImageToDisk(m_image, strFilePath, strError);
 }
 
 QString ImgViewer::getImageFormat(QString strFileName)
@@ -257,6 +235,15 @@ void ImgViewer::wheelEvent(QWheelEvent *event)
     // scale  the View
     this->scale(factor,factor);
     event->accept();
+}
+
+QImage ImgViewer::getImage() {
+    return m_image;
+}
+
+void ImgViewer::setImage(QImage image) {
+    m_image = image;
+    drawChangedImage();
 }
 
 void ImgViewer::drawChangedImage()
@@ -307,15 +294,14 @@ void ImgViewer::applyCannyAlgorithm()
     drawChangedImage();
 }
 
-void ImgViewer::applyGaborFilter()
+QImage ImgViewer::applyGaborFilter(double theta)
 {
     QImage grayscale = m_image.convertToFormat(QImage::Format_Grayscale8);
     double lambda = 3;
     double gamma = 0.1;
     double sigma = 0.56 * lambda;
-    double theta = M_PI / 3;
     double phi = 0;
     auto kernel = algorithms::getGaborKernel(sigma, theta, lambda, gamma, phi);
-    m_image = algorithms::convolution(kernel, grayscale);
-    drawChangedImage();
+    auto result = algorithms::convolution(kernel, grayscale);
+    return result;
 }

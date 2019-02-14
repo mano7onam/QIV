@@ -24,16 +24,19 @@ public:
     void originalSize();
     void rotateView(const int nVal);
     void printView();
+    bool saveImageToDisk(QImage image, QString &_strFilePath, QString &strError);
     bool saveViewToDisk(QString &strFilePath, QString &strError);
     bool saveViewToDisk(QString &strError);
     inline bool isModified() { return m_rotateAngle!=0; }
     inline int getRotateAngle(){ return m_rotateAngle; }
     QString getImageFormat(QString strFileName);
 
+    QImage getImage();
+    void setImage(QImage image);
     void drawChangedImage();
     void applyCannyAlgorithm();
     void applyRandomBlurAlgorithm();
-    void applyGaborFilter();
+    QImage applyGaborFilter(double theta);
 
 private:
     mutable QImage m_image;

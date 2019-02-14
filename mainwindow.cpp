@@ -57,7 +57,7 @@ void MainWindow::openImage()
     QString strFilePath = QFileDialog::getOpenFileName(
                 this,
                 tr("Open File"),
-                QDir::homePath(),
+                /*QDir::homePath()*/"../ImageProcessing/QIV/Data", // hardcoded (not so good)
                 tr("Images (*.png *.jpg *.bmp *.tiff *.tif)"));
 
     if (!strFilePath.isEmpty()) {
@@ -154,8 +154,14 @@ void MainWindow::on_actionGarborFilter_triggered()
     double cut = M_PI / 6;
 
     for (int i = 0; i < 6; ++i, ang += cut) {
-        //ui->graphicsView->applyGaborFilter();
+//        auto sourceImage = ui->graphicsView->getImage();
+        auto resImage = ui->graphicsView->applyGaborFilter(ang);
+        QString sErr;
+        QString resFile = QStringLiteral("../results/res%1").arg(i);
+        //ui->graphicsView->saveViewToDisk(resFile, sErr);
+        ui->graphicsView->saveImageToDisk(resImage, resFile, sErr);
+        std::cout << resFile.toStdString() << ": " << sErr.toStdString() << std::endl;
+//        ui->graphicsView->setImage(sourceImage);
     }
-    ui->graphicsView->applyGaborFilter();
     std::cout << "Gabor filter applied..." << std::endl;
 }
