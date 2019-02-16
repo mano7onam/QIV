@@ -61,6 +61,38 @@ void MainWindow::openImages()
                 tr("Images (*.png *.jpg *.bmp *.tiff *.tif)"));
     for (auto& strFile : strFiles) {
         std::cout << strFile.toStdString() << std::endl;
+        openImage(strFile);
+    }
+}
+
+bool MainWindow::loadFile(QString strFilePath, QString &errStr) {
+    QImage image;
+    image.load(strFilePath);
+    if (image.isNull()) {
+        errStr = QObject::tr("Cannot load %1.").arg(strFilePath);
+        return false;
+    }
+
+    ui->graphicsView->setImage(image, strFilePath);
+    images.emplace_back(image, strFilePath);
+
+    updateStatusBarInfo(strFilePath);
+    enableControls(true);
+
+    return true;
+}
+
+void MainWindow::openImage(QString strFilePath) {
+    curImage = 0;
+    if (!strFilePath.isEmpty()) {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        QString strError;
+        if (!loadFile(strFilePath, strError)) {
+            QApplication::restoreOverrideCursor();
+            QMessageBox::information(this,tr("Error"),tr(strError.toLocal8Bit().constData())); //"Error displaying image."
+            return;
+        }
+        QApplication::restoreOverrideCursor();
     }
 }
 
@@ -72,19 +104,8 @@ void MainWindow::openImage()
                 /*QDir::homePath()*/"../QIV/Data", // hardcoded (not so good)
                 tr("Images (*.png *.jpg *.bmp *.tiff *.tif)"));
 
-    if (!strFilePath.isEmpty()) {
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-        QString strError;
-        if(!ui->graphicsView->loadFile(strFilePath,strError) ){
-            QApplication::restoreOverrideCursor();
-            QMessageBox::information(this,tr("Error"),tr(strError.toLocal8Bit().constData())); //"Error displaying image."
-            return;
-        }
-        QApplication::restoreOverrideCursor();
-
-        updateStatusBarInfo(strFilePath);
-        enableControls(true);
-    }
+    images.clear();
+    openImage(strFilePath);
 }
 
 void MainWindow::printImage()
@@ -165,13 +186,19 @@ void MainWindow::on_actionGarborFilter_triggered()
     double ang = 0;
     double cut = M_PI / 6;
 
+    images.clear();
+    curImage = 0;
+
     for (int i = 0; i < 6; ++i, ang += cut) {
         auto resImage = ui->graphicsView->applyGaborFilter(ang);
         QString sErr;
         QString resFile = QStringLiteral("../results/res%1").arg(i);
         ui->graphicsView->saveImageToDisk(resImage, resFile, sErr);
         std::cout << resFile.toStdString() << ": " << sErr.toStdString() << std::endl;
+        images.emplace_back(resImage, resFile);
     }
+
+    updateCurrentImage();
 
     std::cout << "Gabor filter applied..." << std::endl;
 }
@@ -179,5 +206,22 @@ void MainWindow::on_actionGarborFilter_triggered()
 void MainWindow::on_actionopenSeveralImages_triggered()
 {
     std::cout << "Open several images:" << std::endl;
+    images.clear();
+    curImage = 0;
     openImages();
+}
+
+void MainWindow::updateCurrentImage() {
+    if (images.empty()) return;
+    ui->graphicsView->setImage(images[curImage].image, images[curImage].name);
+    updateStatusBarInfo(images[curImage].name);
+    std::cout << "updateCurrentImage: " << images[curImage].name.toStdString() << std::endl;
+}
+
+void MainWindow::on_actionNextImage_triggered()
+{
+    if (images.empty()) return;
+    curImage = (curImage + 1) % images.size();
+    std::cout << "increment curImage: " << curImage << std::endl;
+    updateCurrentImage();
 }

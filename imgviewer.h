@@ -17,8 +17,6 @@ class ImgViewer : public QGraphicsView
 public:
     explicit ImgViewer(QWidget *parent = 0);
 
-    bool loadFile(const QString &strFilePath, QString &strError);
-
     void resetView();
     void fitWindow();
     void originalSize();
@@ -32,7 +30,7 @@ public:
     QString getImageFormat(QString strFileName);
 
     QImage getImage();
-    void setImage(QImage image);
+    void setImage(QImage image, QString strName);
     void drawChangedImage();
     void applyCannyAlgorithm();
     void applyRandomBlurAlgorithm();

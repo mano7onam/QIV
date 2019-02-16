@@ -117,6 +117,7 @@
    <addaction name="actionApplyKanny"/>
    <addaction name="actionGarborFilter"/>
    <addaction name="actionopenSeveralImages"/>
+   <addaction name="actionNextImage"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
@@ -268,6 +269,18 @@
    </property>
    <property name="toolTip">
     <string>Opne several images</string>
+   </property>
+  </action>
+  <action name="actionNextImage">
+   <property name="icon">
+    <iconset resource="imageViewer.qrc">
+     <normaloff>:/icons/about.png</normaloff>:/icons/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>NextImage</string>
+   </property>
+   <property name="toolTip">
+    <string>Next image</string>
    </property>
   </action>
  </widget>

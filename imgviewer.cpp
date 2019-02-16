@@ -21,34 +21,6 @@ ImgViewer::ImgViewer(QWidget *parent) :
     this->setDragMode(NoDrag);
 }
 
-bool ImgViewer::loadFile(const QString &strFilePath, QString &strError)
-{
-    // clear previous and reset
-    resetView();
-
-    m_image.load(strFilePath);
-    if (m_image.isNull()) {
-        strError = QObject::tr("Cannot load %1.").arg(strFilePath);
-        return false;
-    }
-
-    m_fileName = strFilePath;
-    m_pixmap = QPixmap::fromImage(m_image);
-    m_pixmapItem = m_scene->addPixmap(m_pixmap); // add pixmap to scene and return pointer to pixmapItem
-    m_scene->setSceneRect(m_pixmap.rect());      // set scene rect to image
-    this->centerOn(m_pixmapItem);                // ensure item is centered in the view.
-
-    // preserve fitWindow if activated
-    if (m_IsFitWindow) {
-        fitWindow();
-    } else {
-        this->setDragMode(ScrollHandDrag);
-    }
-
-    m_IsViewInitialized = true;
-    return true;
-}
-
 void ImgViewer::resetView()
 {
     if (m_image.isNull()) {
@@ -241,7 +213,9 @@ QImage ImgViewer::getImage() {
     return m_image;
 }
 
-void ImgViewer::setImage(QImage image) {
+void ImgViewer::setImage(QImage image, QString strName) {
+    resetView();
+    m_fileName = strName;
     m_image = image;
     drawChangedImage();
 }
@@ -251,6 +225,17 @@ void ImgViewer::drawChangedImage()
     m_pixmap = QPixmap::fromImage(m_image);
     m_pixmapItem = m_scene->addPixmap(m_pixmap); // add pixmap to scene and return pointer to pixmapItem
     m_scene->setSceneRect(m_pixmap.rect());      // set scene rect to image
+
+    this->centerOn(m_pixmapItem);                // ensure item is centered in the view.
+
+    // preserve fitWindow if activated
+    if (m_IsFitWindow) {
+        fitWindow();
+    } else {
+        this->setDragMode(ScrollHandDrag);
+    }
+
+    m_IsViewInitialized = true;
 }
 
 void ImgViewer::applyRandomBlurAlgorithm()

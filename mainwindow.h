@@ -6,7 +6,7 @@
 
 
 namespace Ui {
-class MainWindow;
+    class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -23,6 +23,21 @@ private:
     void enableControls(bool bEnable);
     void updateStatusBarInfo(QString strFile);
 
+    struct ImageName {
+        QImage image;
+        QString name;
+        ImageName() {}
+        ImageName(QImage image, QString name) : image(image), name(name) {}
+        ImageName(QImage &&image, QString &&name) : image(image), name(name) {}
+    };
+
+    std::vector<ImageName> images;
+    int curImage = 0;
+
+    bool loadFile(QString strFilePath, QString &strErr);
+    void openImage(QString strFilePath);
+    void updateCurrentImage();
+
 private slots:
     void openImage();
     void openImages();
@@ -34,6 +49,7 @@ private slots:
     void on_actionApplyKanny_triggered();
     void on_actionGarborFilter_triggered();
     void on_actionopenSeveralImages_triggered();
+    void on_actionNextImage_triggered();
 };
 
 #endif // MAINWINDOW_H
